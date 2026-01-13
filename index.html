@@ -275,6 +275,43 @@
                 font-size: 1.1rem;
                 font-weight: bold;
             }
+
+            .memo-section {
+                margin-top: 25px;
+                padding: 15px;
+                background: rgba(255, 255, 255, 0.5); /* 약간 투명하게 */
+                border: 1.5px dashed #b3e5fc; /* 점선으로 구분감 부여 */
+                border-radius: 16px;
+            }
+
+            .memo-header {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.85rem;
+                font-weight: 800;
+                color: var(--blue);
+                margin-bottom: 10px;
+            }
+
+            #today-memo {
+                width: 100%;
+                min-height: 100px;
+                border: none;
+                background: transparent;
+                resize: none;
+                font-family: inherit;
+                font-size: 0.95rem;
+                line-height: 1.6;
+                color: var(--text);
+                padding: 0;
+                outline: none;
+            }
+
+            #today-memo::placeholder {
+                color: #b0bec5;
+                font-size: 0.9rem;
+            }
         </style>
     </head>
     <body>
@@ -320,6 +357,16 @@
 
                 <div id="view-today" class="view-section active">
                     <div id="today-tasks-container"></div>
+                    <div class="memo-section">
+                        <div class="memo-header">
+                            <span>📝</span> 오늘의 상세 메모
+                        </div>
+                        <textarea
+                            id="today-memo"
+                            placeholder="수시로 확인할 내용이나 메모를 입력하세요..."
+                            onblur="saveMemo()"
+                        ></textarea>
+                    </div>
                     <div class="progress-section">
                         <div class="progress-container">
                             <div id="progress-bar" class="progress-bar"></div>
@@ -899,6 +946,11 @@
                     ['일', '월', '화', '수', '목', '금', '토'][now.getDay()]
                 }`;
 
+                const memoEl = document.getElementById('today-memo');
+                if (memoEl) {
+                    memoEl.value = data && data.memo ? data.memo : '';
+                }
+
                 const container = document.getElementById(
                     'today-tasks-container'
                 );
@@ -1070,6 +1122,26 @@
             }
 
             renderToday();
+
+            function saveMemo() {
+                const now = new Date();
+                const todayStr = `${String(now.getMonth() + 1).padStart(
+                    2,
+                    '0'
+                )}-${String(now.getDate()).padStart(2, '0')}`;
+                const memoValue = document.getElementById('today-memo').value;
+
+                const target = schedules.find((s) => s.date === todayStr);
+
+                if (target) {
+                    target.memo = memoValue; // 데이터 객체에 메모 저장
+                    localStorage.setItem(
+                        'mySchedules',
+                        JSON.stringify(schedules)
+                    );
+                    console.log('메모가 저장되었습니다.');
+                }
+            }
         </script>
     </body>
 </html>
