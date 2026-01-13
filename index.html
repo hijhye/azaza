@@ -7,133 +7,222 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
         <style>
             :root {
-                --bg-grad: linear-gradient(180deg, #a1c4fd 0%, #2193b0 100%);
-                --card-bg: rgba(255, 255, 255, 0.95);
-                --primary: #4a90e2;
-                --accent: #ff6b6b;
-                --text: #333;
+                /* 배경색 강화: 희여멀건한 느낌 제거, 선명한 그라데이션 */
+                --bg-day: linear-gradient(180deg, #2193b0 0%, #6dd5ed 100%);
+                --bg-night: linear-gradient(
+                    180deg,
+                    #0f2027 0%,
+                    #203a43 50%,
+                    #2c5364 100%
+                );
+                --card-bg: rgba(255, 255, 255, 0.98);
+                --primary: #2c3e50;
+                --accent: #ff4757;
+                --blue: #3498db;
+                --text: #2f3542;
             }
             body {
-                font-family: 'Pretendard', -apple-system, sans-serif;
-                background: var(--bg-grad);
+                font-family: 'Pretendard', sans-serif;
+                background: var(--bg-day);
                 background-attachment: fixed;
-                min-height: 100vh;
+                min-height: 90vh;
                 margin: 0;
-                padding: 20px;
+                padding: 20px 20px 0px;
                 display: flex;
-                justify-content: center;
+                flex-direction: column;
+                align-items: center;
                 color: var(--text);
+                transition: background 1s ease;
             }
             .container {
                 width: 100%;
-                max-width: 500px;
-                position: relative;
+                max-width: 550px;
             }
-            .header {
-                text-align: center;
+
+            /* 헤더 바 가로 정렬 */
+            .header-bar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: rgba(0, 0, 0, 0.1);
+                backdrop-filter: blur(10px);
+                padding: 15px 20px;
+                border-radius: 20px;
+                border: 1px solid rgba(255, 255, 255, 0.2);
                 margin-bottom: 25px;
                 color: white;
-                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .header-left {
+                display: flex;
+                align-items: baseline;
+                gap: 12px;
             }
             .d-day {
-                font-size: 3.5rem;
+                font-size: 2.2rem;
                 font-weight: 900;
-                margin: 0;
             }
+            .today-date {
+                font-size: 1.1rem;
+                font-weight: 500;
+                opacity: 0.9;
+            }
+
             .tab-menu {
                 display: flex;
-                gap: 10px;
-                margin-top: 20px;
-                justify-content: center;
+                gap: 8px;
             }
             .tab-btn {
-                background: rgba(255, 255, 255, 0.2);
-                border: 1px solid white;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.5);
                 color: white;
-                padding: 10px 20px;
-                border-radius: 25px;
+                padding: 8px 16px;
+                border-radius: 12px;
                 cursor: pointer;
+                font-size: 0.9rem;
                 transition: 0.3s;
             }
             .tab-btn.active {
                 background: white;
-                color: var(--primary);
+                color: var(--blue);
                 font-weight: bold;
+                border-color: white;
             }
+
+            /* 메인 카드 */
+            .card {
+                background: var(--card-bg);
+                border-radius: 24px;
+                padding: 25px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                position: relative;
+            }
+            .section-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            .section-title-main {
+                font-size: 1.3rem;
+                font-weight: 800;
+                color: var(--primary);
+            }
+            .btn-edit-global {
+                background: #f1f2f6;
+                border: none;
+                padding: 8px 14px;
+                border-radius: 10px;
+                font-size: 0.8rem;
+                color: #57606f;
+                cursor: pointer;
+                font-weight: 700;
+            }
+
+            /* 오늘 할 일 항목 */
+            .task-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 15px;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid #f1f2f6;
+            }
+            .task-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+            input[type='checkbox'] {
+                width: 24px;
+                height: 24px;
+                cursor: pointer;
+                accent-color: var(--blue);
+                margin-top: 2px;
+            }
+            .task-info.done .content {
+                text-decoration: line-through;
+                color: #a4b0be;
+            }
+            .label {
+                font-size: 0.8rem;
+                color: #747d8c;
+                font-weight: 700;
+                margin-bottom: 4px;
+                display: block;
+            }
+            .content {
+                font-size: 1.1rem;
+                font-weight: 600;
+                line-height: 1.5;
+                color: var(--text);
+            }
+
+            /* 진행률 바: 오늘 일정 하단으로 이동 */
+            .progress-section {
+                margin-top: 25px;
+                padding-top: 20px;
+                border-top: 2px dashed #f1f2f6;
+            }
+            .progress-container {
+                background: #f1f2f6;
+                border-radius: 10px;
+                height: 12px;
+                overflow: hidden;
+            }
+            .progress-bar {
+                background: var(--blue);
+                height: 100%;
+                width: 0%;
+                transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .progress-text {
+                font-size: 0.85rem;
+                color: var(--blue);
+                text-align: right;
+                margin-top: 8px;
+                font-weight: 800;
+            }
+
+            /* 전체 일정 뷰 (여백 문제 해결) */
             .view-section {
                 display: none;
             }
             .view-section.active {
                 display: block;
             }
-            .card {
-                background: var(--card-bg);
-                border-radius: 24px;
-                padding: 30px;
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-                backdrop-filter: blur(10px);
-                margin-top: 15px;
-            }
-            .section {
-                margin-bottom: 25px;
-                border-left: 5px solid var(--primary);
-                padding-left: 18px;
-            }
-            .section:last-child {
-                margin-bottom: 0;
-            }
-            .section-title {
-                font-size: 0.9rem;
-                color: #777;
-                font-weight: bold;
-                margin-bottom: 6px;
-            }
-            .content {
-                font-size: 1.15rem;
-                font-weight: 600;
-                line-height: 1.5;
-                word-break: keep-all;
-            }
-            .tag {
-                display: inline-block;
-                background: #e1edff;
-                color: #4a90e2;
-                padding: 3px 10px;
-                border-radius: 6px;
-                font-size: 0.85rem;
-                margin-bottom: 8px;
-                font-weight: bold;
-            }
             .list-item {
                 display: flex;
-                align-items: center;
-                padding: 15px;
-                border-bottom: 1px solid #eee;
+                padding: 18px 10px;
+                border-bottom: 1px solid #f1f2f6;
                 cursor: pointer;
-                transition: background 0.2s;
-                border-radius: 12px;
+                transition: 0.2s;
             }
             .list-item:hover {
-                background: rgba(74, 144, 226, 0.08);
+                background: #f9f9f9;
             }
-            .list-date {
-                width: 65px;
-                font-weight: bold;
-                color: var(--primary);
-                font-size: 0.95rem;
+
+            /* 하단 왕시계 */
+            .bottom-clock-area {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(20px);
+                padding: 25px 0;
+                text-align: center;
+                color: white;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                z-index: 1000;
             }
-            .list-info {
-                flex: 1;
+            .big-clock {
+                font-size: 5rem;
+                font-weight: 900;
+                letter-spacing: -4px;
+                line-height: 1;
+                font-variant-numeric: tabular-nums;
             }
-            .list-title {
-                font-size: 1rem;
-                font-weight: 600;
-                margin-bottom: 3px;
-            }
-            .list-sub {
-                font-size: 0.8rem;
-                color: #888;
-            }
+
+            /* 모달 */
             #modal {
                 display: none;
                 position: fixed;
@@ -141,8 +230,8 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0, 0, 0, 0.7);
-                z-index: 1000;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 2000;
                 justify-content: center;
                 align-items: center;
             }
@@ -152,110 +241,122 @@
                 border-radius: 24px;
                 width: 90%;
                 max-width: 400px;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             }
             input,
             textarea {
                 width: 100%;
-                padding: 12px;
+                padding: 14px;
                 margin-bottom: 12px;
-                border: 1px solid #ddd;
-                border-radius: 10px;
+                border: 1px solid #dfe4ea;
+                border-radius: 12px;
                 box-sizing: border-box;
                 font-family: inherit;
             }
             .btn-save {
                 width: 100%;
-                background: var(--primary);
+                background: var(--blue);
                 color: white;
                 border: none;
-                padding: 15px;
+                padding: 16px;
                 border-radius: 12px;
                 cursor: pointer;
                 font-size: 1.1rem;
                 font-weight: bold;
             }
-            .add-floating {
-                position: fixed;
-                bottom: 30px;
-                right: 30px;
-                background: var(--accent);
-                color: white;
-                width: 60px;
-                height: 60px;
-                border-radius: 50%;
-                border: none;
-                font-size: 30px;
-                cursor: pointer;
-                box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
-            }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <div class="d-day" id="d-day-display">D-26</div>
-                <div
-                    id="today-date-text"
-                    style="font-size: 1.2rem; font-weight: 500"
-                >
-                    2026년 01월 13일
+            <div class="header-bar">
+                <div class="header-left">
+                    <div class="d-day" id="d-day-display">D-26</div>
+                    <div class="today-date" id="header-date">01.13 화</div>
                 </div>
-
                 <div class="tab-menu">
                     <button
                         class="tab-btn active"
+                        id="tab-today"
                         onclick="switchView('today')"
                     >
-                        오늘 할 일
+                        오늘
                     </button>
-                    <button class="tab-btn" onclick="switchView('all')">
-                        전체 일정
+                    <button
+                        class="tab-btn"
+                        id="tab-all"
+                        onclick="switchView('all')"
+                    >
+                        전체
                     </button>
                 </div>
             </div>
 
-            <div id="view-today" class="view-section active">
-                <div id="today-card" class="card"></div>
-            </div>
+            <div class="card">
+                <div class="section-header">
+                    <div class="section-title-main" id="view-title">
+                        Today's Focus
+                    </div>
+                    <button
+                        class="btn-edit-global"
+                        id="btn-edit-main"
+                        onclick="openEditToday()"
+                    >
+                        전체 수정
+                    </button>
+                </div>
 
-            <div id="view-all" class="view-section">
-                <div
-                    class="card"
-                    id="full-list-container"
-                    style="max-height: 65vh; overflow-y: auto; padding: 10px"
-                ></div>
+                <div id="view-today" class="view-section active">
+                    <div id="today-tasks-container"></div>
+                    <div class="progress-section">
+                        <div class="progress-container">
+                            <div id="progress-bar" class="progress-bar"></div>
+                        </div>
+                        <div id="progress-text" class="progress-text">
+                            진행률 0%
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-all" class="view-section">
+                    <div
+                        id="full-list-container"
+                        style="max-height: 55vh; overflow-y: auto"
+                    ></div>
+                </div>
             </div>
         </div>
 
-        <button class="add-floating" onclick="openModal()">+</button>
+        <div class="bottom-clock-area">
+            <div id="big-clock" class="big-clock">00:00:00</div>
+        </div>
 
         <div id="modal">
             <div class="modal-content">
-                <h3 style="margin-top: 0">일정 편집</h3>
+                <h3 style="margin-top: 0">일정 데이터 수정</h3>
                 <input type="text" id="in-date" placeholder="날짜 (MM-DD)" />
                 <input
                     type="text"
                     id="in-general"
-                    placeholder="일반 일정 (수영, 알바 등)"
+                    placeholder="🏃 일반 일정 (수영 등)"
                 />
                 <input
                     type="text"
                     id="in-exam-cat"
-                    placeholder="정처기준비 분류(핵심요약/기출문제/복습)"
+                    placeholder="📚 시험 분류"
                 />
                 <textarea
                     id="in-exam-note"
-                    placeholder="공부 상세 내용"
+                    placeholder="📚 공부 내용"
                     rows="2"
                 ></textarea>
                 <input
                     type="text"
                     id="in-job-note"
-                    placeholder="취업 준비 내용"
+                    placeholder="💼 취업 준비"
                 />
-                <input type="text" id="in-side" placeholder="부수입/기타" />
-                <button class="btn-save" onclick="saveData()">저장하기</button>
+                <input type="text" id="in-side" placeholder="💰 부수입" />
+                <button class="btn-save" onclick="saveData()">
+                    변경사항 저장
+                </button>
                 <button
                     onclick="closeModal()"
                     style="
@@ -267,30 +368,31 @@
                         cursor: pointer;
                     "
                 >
-                    닫기
+                    취소
                 </button>
             </div>
         </div>
 
         <script>
-            // 1. 모든 데이터 입력 (중략 없음)
-            const rawData = [
+            const EXAM_DATE = new Date('2026-02-08');
+
+            // 이미지 내 모든 데이터 100% 복구
+            const INITIAL_DATA = [
                 {
                     date: '01-13',
                     general: '',
                     exam: { cat: '핵심요약', note: '1회독' },
-                    job: { cat: '포트폴리오', note: '팀플 완성하기' },
+                    job: { note: '팀플 완성하기' },
                     side: '상세페이지 만들기',
+                    done: [],
                 },
                 {
                     date: '01-14',
                     general: '수영',
                     exam: { cat: '핵심요약', note: '2회독' },
-                    job: {
-                        cat: '포트폴리오',
-                        note: '자바스크립트 프로젝트 반응형 완성하기',
-                    },
+                    job: { note: '자바스크립트 프로젝트 반응형 완성하기' },
                     side: '상세페이지 만들기',
+                    done: [],
                 },
                 {
                     date: '01-15',
@@ -299,11 +401,9 @@
                         cat: '핵심요약',
                         note: '3회독 + 내용 내가 알아보기 쉽게 정리',
                     },
-                    job: {
-                        cat: '포트폴리오',
-                        note: '자바스크립트 프로젝트 반응형 완성하기',
-                    },
+                    job: { note: '자바스크립트 프로젝트 반응형 완성하기' },
                     side: '상세페이지 만들기',
+                    done: [],
                 },
                 {
                     date: '01-16',
@@ -312,8 +412,9 @@
                         cat: '핵심요약',
                         note: '3회독 + 내용 내가 알아보기 쉽게 정리',
                     },
-                    job: { cat: '자소서', note: '1차 작성' },
+                    job: { note: '자소서 1차 작성' },
                     side: '상세페이지 만들기',
+                    done: [],
                 },
                 {
                     date: '01-17',
@@ -322,260 +423,340 @@
                         cat: '핵심요약',
                         note: '3회독 + 내용 내가 알아보기 쉽게 정리',
                     },
-                    job: { cat: '점검', note: '점검하기' },
+                    job: { note: '점검하기' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-18',
                     general: '알바, 교회',
                     exam: { cat: '복습', note: '핵심요약 노트' },
-                    job: { cat: '점검', note: '점검하기' },
+                    job: { note: '점검하기' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-19',
                     general: '수영',
                     exam: { cat: '기출문제', note: '1회 문제풀이 + 오답노트' },
-                    job: {
-                        cat: '포트폴리오',
-                        note: '포트폴리오 사이트 완성하기',
-                    },
+                    job: { note: '포트폴리오 사이트 완성하기' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-20',
                     general: '',
                     exam: { cat: '기출문제', note: '2회 문제풀이 + 오답노트' },
-                    job: {
-                        cat: '포트폴리오',
-                        note: '포트폴리오 사이트 완성하기',
-                    },
+                    job: { note: '포트폴리오 사이트 완성하기' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-21',
                     general: '수영',
                     exam: { cat: '기출문제', note: '3회 문제풀이 + 오답노트' },
-                    job: {
-                        cat: '포트폴리오',
-                        note: '포트폴리오 프로젝트들 기획서 작성하기',
-                    },
+                    job: { note: '포트폴리오 프로젝트들 기획서 작성하기' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-22',
                     general: '',
                     exam: { cat: '기출문제', note: '4회 문제풀이 + 오답노트' },
                     job: {
-                        cat: '포트폴리오',
                         note: '리액트 사이트 제대로 다시 깔끔하게 정리하기',
                     },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-23',
                     general: '수영',
                     exam: { cat: '기출문제', note: '5회 문제풀이 + 오답노트' },
                     job: {
-                        cat: '포트폴리오',
                         note: '리액트 사이트 제대로 다시 깔끔하게 정리하기',
                     },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-24',
                     general: '알바',
                     exam: { cat: '기출문제', note: '6회 문제풀이 + 오답노트' },
-                    job: { cat: '자소서', note: '2차 수정' },
+                    job: { note: '자소서 2차 수정' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-25',
                     general: '알바, 교회',
                     exam: { cat: '복습', note: '핵심요약 노트 + 오답노트' },
-                    job: { cat: '점검', note: '점검하기' },
+                    job: { note: '점검하기' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-26',
                     general: '수영',
                     exam: { cat: '기출문제', note: '7회 문제풀이 + 오답노트' },
-                    job: { cat: '입사지원', note: '입사지원하기..덜덜' },
+                    job: { note: '입사지원하기..덜덜' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-27',
                     general: '',
                     exam: { cat: '기출문제', note: '8회 문제풀이 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-28',
                     general: '수영',
                     exam: { cat: '기출문제', note: '9회 문제풀이 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-29',
                     general: '',
                     exam: { cat: '기출문제', note: '10회 문제풀이 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-30',
                     general: '수영',
                     exam: { cat: '기출문제', note: '11회 문제풀이 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '01-31',
                     general: '알바',
                     exam: { cat: '기출문제', note: '12회 문제풀이 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '02-01',
                     general: '교회',
                     exam: { cat: '복습', note: '핵심요약 노트 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '02-02',
                     general: '',
                     exam: { cat: '기출문제', note: '13회 문제풀이 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '02-03',
                     general: '',
                     exam: { cat: '기출문제', note: '14회 문제풀이 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '02-04',
                     general: '',
                     exam: { cat: '기출문제', note: '15회 문제풀이 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '02-05',
                     general: '',
                     exam: { cat: '복습', note: '핵심요약 노트 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '02-06',
                     general: '',
                     exam: { cat: '복습', note: '핵심요약 노트 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '02-07',
                     general: '',
                     exam: { cat: '복습', note: '핵심요약 노트 + 오답노트' },
-                    job: { cat: '-', note: '-' },
+                    job: { note: '-' },
                     side: '',
+                    done: [],
                 },
                 {
                     date: '02-08',
                     general: '',
                     exam: { cat: '시험당일!!', note: '합격하기!! 두둥' },
-                    job: { cat: '-', note: '고생하셨습니다!' },
+                    job: { note: '고생하셨습니다!' },
                     side: '',
+                    done: [],
                 },
             ];
 
+            // 로컬 데이터 강제 동기화 (기존 짧은 데이터 무시)
             let schedules =
-                JSON.parse(localStorage.getItem('mySchedules')) || rawData;
-            const examDate = new Date('2026-02-08');
+                JSON.parse(localStorage.getItem('mySchedules')) || [];
+            if (schedules.length < 20) {
+                schedules = INITIAL_DATA;
+                localStorage.setItem('mySchedules', JSON.stringify(schedules));
+            }
+
+            function updateTheme() {
+                const now = new Date();
+                const hour = now.getHours();
+                const body = document.body;
+
+                if (hour >= 6 && hour < 18) {
+                    body.style.setProperty(
+                        '--bg-grad',
+                        'linear-gradient(180deg, #2193b0 0%, #6dd5ed 100%)'
+                    );
+                } else {
+                    body.style.setProperty(
+                        '--bg-grad',
+                        'linear-gradient(180deg, #0f2027 0%, #203a43 50%, #2c5364 100%)'
+                    );
+                }
+                document.getElementById('big-clock').innerText = now
+                    .toTimeString()
+                    .split(' ')[0];
+            }
+            setInterval(updateTheme, 1000);
+            updateTheme();
 
             function switchView(view) {
+                const editBtn = document.getElementById('btn-edit-main');
                 document
                     .querySelectorAll('.view-section')
                     .forEach((el) => el.classList.remove('active'));
                 document
                     .querySelectorAll('.tab-btn')
                     .forEach((el) => el.classList.remove('active'));
+
                 if (view === 'today') {
                     document
                         .getElementById('view-today')
                         .classList.add('active');
                     document
-                        .querySelector('button[onclick*="today"]')
+                        .getElementById('tab-today')
                         .classList.add('active');
+                    document.getElementById('view-title').innerText =
+                        "Today's Focus";
+                    editBtn.style.display = 'block';
                     renderToday();
                 } else {
                     document.getElementById('view-all').classList.add('active');
-                    document
-                        .querySelector('button[onclick*="all"]')
-                        .classList.add('active');
+                    document.getElementById('tab-all').classList.add('active');
+                    document.getElementById('view-title').innerText =
+                        'Full Schedule';
+                    editBtn.style.display = 'none';
                     renderAll();
                 }
             }
 
             function renderToday() {
                 const now = new Date();
-                const todayStr = `${String(now.getMonth() + 1).padStart(
-                    2,
-                    '0'
-                )}-${String(now.getDate()).padStart(2, '0')}`;
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                const todayStr = `${mm}-${dd}`;
                 const data = schedules.find((s) => s.date === todayStr);
-                const container = document.getElementById('today-card');
 
                 const diff =
-                    examDate -
+                    EXAM_DATE -
                     new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                const dDay = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                document.getElementById('d-day-display').innerText =
-                    dDay === 0
-                        ? 'D-Day'
-                        : dDay < 0
-                        ? `D+${Math.abs(dDay)}`
-                        : `D-${dDay}`;
                 document.getElementById(
-                    'today-date-text'
-                ).innerText = `${now.getFullYear()}년 ${
-                    todayStr.split('-')[0]
-                }월 ${todayStr.split('-')[1]}일`;
+                    'd-day-display'
+                ).innerText = `D-${Math.ceil(diff / (1000 * 60 * 60 * 24))}`;
+                document.getElementById(
+                    'header-date'
+                ).innerText = `${mm}.${dd} ${
+                    ['일', '월', '화', '수', '목', '금', '토'][now.getDay()]
+                }`;
 
+                const container = document.getElementById(
+                    'today-tasks-container'
+                );
                 if (!data) {
-                    container.innerHTML = `<div style="text-align:center; padding:40px; color:#888;">오늘 예정된 계획이 없습니다.</div>`;
+                    container.innerHTML = `<p style="text-align:center; color:#999; padding:40px;">일정 없음</p>`;
+                    updateProgress(0, 0);
                     return;
                 }
 
-                container.innerHTML = `
-        <div class="section"><div class="section-title">🏃 일반 일정</div><div class="content">${
-            data.general || '없음'
-        }</div></div>
-        <div class="section"><div class="section-title">📚 정처기 준비</div><div class="tag">${
-            data.exam.cat
-        }</div><div class="content">${data.exam.note}</div></div>
-        <div class="section"><div class="section-title">💼 취업 서류</div><div class="tag">${
-            data.job.cat
-        }</div><div class="content">${data.job.note}</div></div>
-        ${
-            data.side
-                ? `<div class="section"><div class="section-title">💰 부수입 작업</div><div class="content">${data.side}</div></div>`
-                : ''
-        }
-    `;
-                gsap.from('.section', {
-                    opacity: 0,
-                    x: -20,
-                    stagger: 0.1,
-                    duration: 0.5,
-                });
+                const tasks = [
+                    {
+                        id: 'exam',
+                        label: `📚 정처기 (${data.exam.cat})`,
+                        content: data.exam.note,
+                    },
+                    {
+                        id: 'job',
+                        label: '💼 취업 준비',
+                        content: data.job.note || data.job,
+                    },
+                    {
+                        id: 'general',
+                        label: '🏃 일반 일정',
+                        content: data.general,
+                    },
+                    { id: 'side', label: '💰 부수입 작업', content: data.side },
+                ].filter(
+                    (t) => t.content && t.content !== '-' && t.content !== ''
+                );
+
+                container.innerHTML = tasks
+                    .map(
+                        (t) => `
+        <div class="task-item">
+            <input type="checkbox" ${
+                data.done && data.done.includes(t.id) ? 'checked' : ''
+            } onchange="toggleTask('${todayStr}', '${t.id}')">
+            <div class="task-info ${
+                data.done && data.done.includes(t.id) ? 'done' : ''
+            }">
+                <span class="label">${t.label}</span>
+                <div class="content">${t.content}</div>
+            </div>
+        </div>
+    `
+                    )
+                    .join('');
+                updateProgress(data.done ? data.done.length : 0, tasks.length);
+            }
+
+            function toggleTask(date, taskId) {
+                const data = schedules.find((s) => s.date === date);
+                if (!data.done) data.done = [];
+                if (data.done.includes(taskId))
+                    data.done = data.done.filter((id) => id !== taskId);
+                else data.done.push(taskId);
+                localStorage.setItem('mySchedules', JSON.stringify(schedules));
+                renderToday();
+            }
+
+            function updateProgress(done, total) {
+                const percent =
+                    total === 0 ? 0 : Math.round((done / total) * 100);
+                document.getElementById('progress-bar').style.width =
+                    percent + '%';
+                document.getElementById(
+                    'progress-text'
+                ).innerText = `진행률 ${percent}%`;
             }
 
             function renderAll() {
@@ -587,24 +768,43 @@
                     .map(
                         (s) => `
         <div class="list-item" onclick="openModal('${s.date}')">
-            <div class="list-date">${s.date}</div>
-            <div class="list-info">
-                <div class="list-title">${s.exam.note}</div>
-                <div class="list-sub">${s.exam.cat} | ${
-                            s.general || '일정없음'
-                        }</div>
+            <div style="width:55px; font-weight:800; color:#3498db; font-size:0.9rem;">${
+                s.date
+            }</div>
+            <div style="flex:1;">
+                <div style="font-weight:700; color:#333; font-size:0.95rem;">
+                    ${s.exam.note ? `<div>📚 ${s.exam.note}</div>` : ''}
+                    ${
+                        (s.job.note || s.job) &&
+                        s.job.note !== '-' &&
+                        s.job !== '-'
+                            ? `<div>💼 ${s.job.note || s.job}</div>`
+                            : ''
+                    }
+                </div>
+                <div style="font-size:0.8rem; color:#999; margin-top:6px; line-height:1.6;">
+                    ${s.general ? `<div>🏃 ${s.general}</div>` : ''}
+                    ${s.side ? `<div>💰 ${s.side}</div>` : ''}
+                </div>
             </div>
-            <div style="color:#ddd">❯</div>
+            <div style="color:#eee; align-self:center;">❯</div>
         </div>
     `
                     )
                     .join('');
             }
 
+            function openEditToday() {
+                const now = new Date();
+                const todayStr = `${String(now.getMonth() + 1).padStart(
+                    2,
+                    '0'
+                )}-${String(now.getDate()).padStart(2, '0')}`;
+                openModal(todayStr);
+            }
+
             function openModal(date = '') {
-                const target = date
-                    ? schedules.find((s) => s.date === date)
-                    : null;
+                const target = schedules.find((s) => s.date === date);
                 document.getElementById('in-date').value = date || '';
                 document.getElementById('in-general').value = target
                     ? target.general
@@ -616,7 +816,7 @@
                     ? target.exam.note
                     : '';
                 document.getElementById('in-job-note').value = target
-                    ? target.job.note
+                    ? target.job.note || target.job
                     : '';
                 document.getElementById('in-side').value = target
                     ? target.side
@@ -630,7 +830,6 @@
 
             function saveData() {
                 const date = document.getElementById('in-date').value;
-                if (!date) return alert('날짜를 입력하세요!');
                 const newData = {
                     date,
                     general: document.getElementById('in-general').value,
@@ -638,15 +837,16 @@
                         cat: document.getElementById('in-exam-cat').value,
                         note: document.getElementById('in-exam-note').value,
                     },
-                    job: {
-                        cat: '',
-                        note: document.getElementById('in-job-note').value,
-                    },
+                    job: { note: document.getElementById('in-job-note').value },
                     side: document.getElementById('in-side').value,
                 };
                 const idx = schedules.findIndex((s) => s.date === date);
-                if (idx > -1) schedules[idx] = newData;
-                else schedules.push(newData);
+                if (idx > -1)
+                    schedules[idx] = { ...schedules[idx], ...newData };
+                else {
+                    newData.done = [];
+                    schedules.push(newData);
+                }
                 localStorage.setItem('mySchedules', JSON.stringify(schedules));
                 closeModal();
                 renderToday();
