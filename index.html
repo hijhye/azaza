@@ -6,20 +6,24 @@
         <title>아자자 대시보드</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+        <link
+            href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css"
+            rel="stylesheet"
+        />
+
         <style>
             @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
             :root {
-                /* 요청하신 밝고 시원한 얼음 파란색 그라데이션 */
                 --bg-day: linear-gradient(135deg, #aee1f9 0%, #f0f9ff 100%);
                 --card-bg: rgba(255, 255, 255, 0.85);
-                --primary: #0077c2; /* 선명한 파란색 */
-                --blue: #4fc3f7; /* 밝은 하늘색 */
-                --text: #2c3e50; /* 부드러운 진한 회색 */
-                --text-sub: #78909c; /* 부드러운 회색 */
+                --primary: #0077c2;
+                --blue: #4fc3f7;
+                --text: #2c3e50;
+                --text-sub: #78909c;
             }
             body {
-                font-family: 'Pretendard', sans-serif;
+                font-family: 'SUIT Variable', sans-serif;
                 background: var(--bg-day);
                 background-attachment: fixed;
                 min-height: 100vh;
@@ -38,7 +42,6 @@
                 max-width: 550px;
             }
 
-            /* 헤더 스타일 */
             .header-bar {
                 display: flex;
                 align-items: center;
@@ -91,7 +94,6 @@
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             }
 
-            /* 카드 및 항목 */
             .card {
                 background: var(--card-bg);
                 border-radius: 24px;
@@ -122,10 +124,8 @@
                 font-weight: 700;
                 transition: 0.2s;
             }
-            .btn-edit-global:hover {
-                background: #b3e5fc;
-            }
 
+            /* 할 일 리스트 드래그 핸들 효과 */
             .task-item {
                 display: flex;
                 align-items: flex-start;
@@ -137,14 +137,14 @@
                 border: 1px solid #e1f5fe;
                 cursor: grab;
                 transition: transform 0.2s, box-shadow 0.2s;
+                touch-action: none; /* 모바일 드래그 원활하게 */
             }
             .task-item:active {
                 cursor: grabbing;
                 box-shadow: 0 5px 15px rgba(0, 119, 194, 0.1);
-                border-color: var(--blue);
             }
             .sortable-ghost {
-                opacity: 0.7;
+                opacity: 0.4;
                 background: #e1f5fe !important;
                 border: 2px dashed var(--blue) !important;
             }
@@ -175,7 +175,6 @@
                 pointer-events: none;
             }
 
-            /* 진행률 바 */
             .progress-section {
                 margin-top: 25px;
                 padding-top: 20px;
@@ -212,13 +211,8 @@
                 padding: 18px 10px;
                 border-bottom: 1px solid #e1f5fe;
                 cursor: pointer;
-                transition: 0.2s;
-            }
-            .list-item:hover {
-                background: #f1faff;
             }
 
-            /* 하단 시계 */
             .bottom-clock-area {
                 position: fixed;
                 bottom: 0;
@@ -231,7 +225,6 @@
                 color: var(--primary);
                 border-top: 1px solid rgba(255, 255, 255, 0.5);
                 z-index: 1000;
-                box-shadow: 0 -5px 20px rgba(0, 119, 194, 0.1);
             }
             .big-clock {
                 font-size: 5rem;
@@ -239,7 +232,6 @@
                 letter-spacing: -4px;
                 line-height: 1;
                 font-variant-numeric: tabular-nums;
-                text-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
             }
 
             #modal {
@@ -261,7 +253,6 @@
                 border-radius: 24px;
                 width: 90%;
                 max-width: 400px;
-                box-shadow: 0 10px 30px rgba(0, 119, 194, 0.2);
             }
             input,
             textarea {
@@ -274,12 +265,6 @@
                 font-family: inherit;
                 color: var(--text);
             }
-            input:focus,
-            textarea:focus {
-                outline: none;
-                border-color: var(--blue);
-                box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.2);
-            }
             .btn-save {
                 width: 100%;
                 background: var(--blue);
@@ -290,10 +275,6 @@
                 cursor: pointer;
                 font-size: 1.1rem;
                 font-weight: bold;
-                transition: 0.2s;
-            }
-            .btn-save:hover {
-                background: var(--primary);
             }
         </style>
     </head>
@@ -301,8 +282,10 @@
         <div class="container">
             <div class="header-bar">
                 <div class="header-left">
-                    <div class="d-day" id="d-day-display">D-27</div>
-                    <div class="today-date" id="header-date">01.13 월</div>
+                    <div class="d-day" id="d-day-display">D-Day</div>
+                    <div class="today-date" id="header-date">
+                        날짜 로딩중...
+                    </div>
                 </div>
                 <div class="tab-menu">
                     <button
@@ -366,7 +349,12 @@
                 <h3 style="margin-top: 0; color: var(--primary)">
                     일정 데이터 수정
                 </h3>
-                <input type="text" id="in-date" placeholder="날짜 (MM-DD)" />
+                <input
+                    type="text"
+                    id="in-date"
+                    placeholder="날짜 (MM-DD)"
+                    readonly
+                />
                 <input type="text" id="in-general" placeholder="🏃 일반 일정" />
                 <input
                     type="text"
@@ -404,245 +392,454 @@
         <script>
             const EXAM_DATE = new Date('2026-02-08');
 
-            // 이미지의 모든 데이터 복구
+            // 1월 13일부터 2월 8일까지의 모든 데이터 복구
             const INITIAL_DATA = [
                 {
                     date: '01-13',
-                    general: '',
-                    exam: { cat: '핵심요약', note: '1회독' },
-                    job: { note: '팀플 완성하기' },
-                    side: '상세페이지 만들기',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (핵심요약)',
+                            content: '1회독',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '팀플 완성하기',
+                        },
+                        {
+                            id: 'side',
+                            label: '💰 부수입 작업',
+                            content: '상세페이지 만들기',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-14',
-                    general: '수영',
-                    exam: { cat: '핵심요약', note: '2회독' },
-                    job: { note: '자바스크립트 프로젝트 반응형 완성하기' },
-                    side: '상세페이지 만들기',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (핵심요약)',
+                            content: '2회독',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '자바스크립트 프로젝트 반응형',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '수영',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-15',
-                    general: '',
-                    exam: {
-                        cat: '핵심요약',
-                        note: '3회독 + 내용 내가 알아보기 쉽게 정리',
-                    },
-                    job: { note: '자바스크립트 프로젝트 반응형 완성하기' },
-                    side: '상세페이지 만들기',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (핵심요약)',
+                            content: '3회독 + 정리',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '자바스크립트 프로젝트 반응형',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-16',
-                    general: '수영, 국취상담',
-                    exam: {
-                        cat: '핵심요약',
-                        note: '3회독 + 내용 내가 알아보기 쉽게 정리',
-                    },
-                    job: { note: '자소서 1차 작성' },
-                    side: '상세페이지 만들기',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (핵심요약)',
+                            content: '3회독 + 정리',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '자소서 1차 작성',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '수영, 국취상담',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-17',
-                    general: '알바',
-                    exam: {
-                        cat: '핵심요약',
-                        note: '3회독 + 내용 내가 알아보기 쉽게 정리',
-                    },
-                    job: { note: '점검하기' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (핵심요약)',
+                            content: '3회독 + 정리',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '점검하기',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '알바',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-18',
-                    general: '알바, 교회',
-                    exam: { cat: '복습', note: '핵심요약 노트' },
-                    job: { note: '점검하기' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (복습)',
+                            content: '핵심요약 노트',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '점검하기',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '알바, 교회',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-19',
-                    general: '수영',
-                    exam: { cat: '기출문제', note: '1회 문제풀이 + 오답노트' },
-                    job: { note: '포트폴리오 사이트 완성하기' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '1회 풀이 + 오답',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '포폴 사이트 완성',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '수영',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-20',
-                    general: '',
-                    exam: { cat: '기출문제', note: '2회 문제풀이 + 오답노트' },
-                    job: { note: '포트폴리오 사이트 완성하기' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '2회 풀이 + 오답',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '포폴 사이트 완성',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-21',
-                    general: '수영',
-                    exam: { cat: '기출문제', note: '3회 문제풀이 + 오답노트' },
-                    job: { note: '포트폴리오 프로젝트들 기획서 작성하기' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '3회 풀이 + 오답',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '포폴 기획서 작성',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '수영',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-22',
-                    general: '',
-                    exam: { cat: '기출문제', note: '4회 문제풀이 + 오답노트' },
-                    job: {
-                        note: '리액트 사이트 제대로 다시 깔끔하게 정리하기',
-                    },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '4회 풀이 + 오답',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '리액트 사이트 정리',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-23',
-                    general: '수영',
-                    exam: { cat: '기출문제', note: '5회 문제풀이 + 오답노트' },
-                    job: {
-                        note: '리액트 사이트 제대로 다시 깔끔하게 정리하기',
-                    },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '5회 풀이 + 오답',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '리액트 사이트 정리',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '수영',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-24',
-                    general: '알바',
-                    exam: { cat: '기출문제', note: '6회 문제풀이 + 오답노트' },
-                    job: { note: '자소서 2차 수정' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '6회 풀이 + 오답',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '자소서 2차 수정',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '알바',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-25',
-                    general: '알바, 교회',
-                    exam: { cat: '복습', note: '핵심요약 노트 + 오답노트' },
-                    job: { note: '점검하기' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (복습)',
+                            content: '요약노트 + 오답',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '점검하기',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '알바, 교회',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-26',
-                    general: '수영',
-                    exam: { cat: '기출문제', note: '7회 문제풀이 + 오답노트' },
-                    job: { note: '입사지원하기..덜덜' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '7회 풀이 + 오답',
+                        },
+                        {
+                            id: 'job',
+                            label: '💼 취업 준비',
+                            content: '입사지원하기',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '수영',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-27',
-                    general: '',
-                    exam: { cat: '기출문제', note: '8회 문제풀이 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '8회 풀이 + 오답',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-28',
-                    general: '수영',
-                    exam: { cat: '기출문제', note: '9회 문제풀이 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '9회 풀이 + 오답',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '수영',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-29',
-                    general: '',
-                    exam: { cat: '기출문제', note: '10회 문제풀이 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '10회 풀이 + 오답',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-30',
-                    general: '수영',
-                    exam: { cat: '기출문제', note: '11회 문제풀이 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '11회 풀이 + 오답',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '수영',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '01-31',
-                    general: '알바',
-                    exam: { cat: '기출문제', note: '12회 문제풀이 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '12회 풀이 + 오답',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '알바',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '02-01',
-                    general: '교회',
-                    exam: { cat: '복습', note: '핵심요약 노트 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (복습)',
+                            content: '요약노트 + 오답',
+                        },
+                        {
+                            id: 'general',
+                            label: '🏃 일반 일정',
+                            content: '교회',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '02-02',
-                    general: '',
-                    exam: { cat: '기출문제', note: '13회 문제풀이 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '13회 풀이 + 오답',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '02-03',
-                    general: '',
-                    exam: { cat: '기출문제', note: '14회 문제풀이 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '14회 풀이 + 오답',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '02-04',
-                    general: '',
-                    exam: { cat: '기출문제', note: '15회 문제풀이 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (기출문제)',
+                            content: '15회 풀이 + 오답',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '02-05',
-                    general: '',
-                    exam: { cat: '복습', note: '핵심요약 노트 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (복습)',
+                            content: '요약노트 + 오답',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '02-06',
-                    general: '',
-                    exam: { cat: '복습', note: '핵심요약 노트 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (복습)',
+                            content: '요약노트 + 오답',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '02-07',
-                    general: '',
-                    exam: { cat: '복습', note: '핵심요약 노트 + 오답노트' },
-                    job: { note: '-' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 정처기 (복습)',
+                            content: '요약노트 + 오답',
+                        },
+                    ],
                     done: [],
                 },
                 {
                     date: '02-08',
-                    general: '시험당일',
-                    exam: { cat: '시험', note: '합격하기!! 두둥' },
-                    job: { note: '고생하셨습니다!' },
-                    side: '',
+                    tasks: [
+                        {
+                            id: 'exam',
+                            label: '📚 시험당일',
+                            content: '합격 가즈아!',
+                        },
+                    ],
                     done: [],
                 },
             ];
 
             let schedules =
                 JSON.parse(localStorage.getItem('mySchedules')) || INITIAL_DATA;
-            if (schedules.length < 25) {
-                schedules = INITIAL_DATA;
-                localStorage.setItem('mySchedules', JSON.stringify(schedules));
-            }
 
             function updateClock() {
                 const now = new Date();
@@ -653,31 +850,13 @@
             setInterval(updateClock, 1000);
             updateClock();
 
-            let sortable;
-            function initSortable() {
-                const el = document.getElementById('today-tasks-container');
-                if (sortable) sortable.destroy();
-                sortable = Sortable.create(el, {
-                    animation: 200,
-                    ghostClass: 'sortable-ghost',
-                    onEnd: function () {
-                        localStorage.setItem(
-                            'mySchedules',
-                            JSON.stringify(schedules)
-                        );
-                    },
-                });
-            }
-
             function switchView(view) {
-                const editBtn = document.getElementById('btn-edit-main');
                 document
                     .querySelectorAll('.view-section')
                     .forEach((el) => el.classList.remove('active'));
                 document
                     .querySelectorAll('.tab-btn')
                     .forEach((el) => el.classList.remove('active'));
-
                 if (view === 'today') {
                     document
                         .getElementById('view-today')
@@ -687,24 +866,26 @@
                         .classList.add('active');
                     document.getElementById('view-title').innerText =
                         "Today's Focus";
-                    editBtn.style.display = 'block';
+                    document.getElementById('btn-edit-main').style.display =
+                        'block';
                     renderToday();
-                    initSortable();
                 } else {
                     document.getElementById('view-all').classList.add('active');
                     document.getElementById('tab-all').classList.add('active');
                     document.getElementById('view-title').innerText =
                         'Full Schedule';
-                    editBtn.style.display = 'none';
+                    document.getElementById('btn-edit-main').style.display =
+                        'none';
                     renderAll();
                 }
             }
 
             function renderToday() {
                 const now = new Date();
-                const mm = String(now.getMonth() + 1).padStart(2, '0');
-                const dd = String(now.getDate()).padStart(2, '0');
-                const todayStr = `${mm}-${dd}`;
+                const todayStr = `${String(now.getMonth() + 1).padStart(
+                    2,
+                    '0'
+                )}-${String(now.getDate()).padStart(2, '0')}`;
                 const data = schedules.find((s) => s.date === todayStr);
 
                 const diff =
@@ -715,50 +896,27 @@
                 ).innerText = `D-${Math.ceil(diff / (1000 * 60 * 60 * 24))}`;
                 document.getElementById(
                     'header-date'
-                ).innerText = `${mm}.${dd} ${
+                ).innerText = `${todayStr.replace('-', '.')} ${
                     ['일', '월', '화', '수', '목', '금', '토'][now.getDay()]
                 }`;
 
                 const container = document.getElementById(
                     'today-tasks-container'
                 );
-                if (!data) {
+                if (!data || !data.tasks.length) {
                     container.innerHTML = `<p style="text-align:center; padding:40px; color:var(--text-sub);">오늘은 일정이 없습니다.</p>`;
                     updateProgress(0, 0);
                     return;
                 }
 
-                const tasks = [
-                    {
-                        id: 'exam',
-                        label: `📚 정처기 (${data.exam.cat})`,
-                        content: data.exam.note,
-                    },
-                    {
-                        id: 'job',
-                        label: '💼 취업 준비',
-                        content: data.job.note,
-                    },
-                    {
-                        id: 'general',
-                        label: '🏃 일반 일정',
-                        content: data.general,
-                    },
-                    { id: 'side', label: '💰 부수입 작업', content: data.side },
-                ].filter(
-                    (t) => t.content && t.content !== '-' && t.content !== ''
-                );
-
-                container.innerHTML = tasks
+                container.innerHTML = data.tasks
                     .map(
                         (t) => `
-        <div class="task-item">
+        <div class="task-item" data-id="${t.id}">
             <input type="checkbox" ${
-                data.done && data.done.includes(t.id) ? 'checked' : ''
+                data.done.includes(t.id) ? 'checked' : ''
             } onchange="toggleTask('${todayStr}', '${t.id}')">
-            <div class="task-info ${
-                data.done && data.done.includes(t.id) ? 'done' : ''
-            }">
+            <div class="task-info ${data.done.includes(t.id) ? 'done' : ''}">
                 <span class="label">${t.label}</span>
                 <div class="content">${t.content}</div>
             </div>
@@ -766,12 +924,38 @@
     `
                     )
                     .join('');
-                updateProgress(data.done ? data.done.length : 0, tasks.length);
+
+                updateProgress(data.done.length, data.tasks.length);
+                initSortable(todayStr);
+            }
+
+            function initSortable(todayStr) {
+                const el = document.getElementById('today-tasks-container');
+                Sortable.create(el, {
+                    animation: 200,
+                    ghostClass: 'sortable-ghost',
+                    onEnd: function () {
+                        const data = schedules.find((s) => s.date === todayStr);
+                        const newOrderIds = [
+                            ...el.querySelectorAll('.task-item'),
+                        ].map((item) => item.dataset.id);
+
+                        // 데이터 순서 재배치
+                        const reorderedTasks = newOrderIds.map((id) =>
+                            data.tasks.find((t) => t.id === id)
+                        );
+                        data.tasks = reorderedTasks;
+
+                        localStorage.setItem(
+                            'mySchedules',
+                            JSON.stringify(schedules)
+                        );
+                    },
+                });
             }
 
             function toggleTask(date, taskId) {
                 const data = schedules.find((s) => s.date === date);
-                if (!data.done) data.done = [];
                 if (data.done.includes(taskId))
                     data.done = data.done.filter((id) => id !== taskId);
                 else data.done.push(taskId);
@@ -798,23 +982,12 @@
                     .map(
                         (s) => `
         <div class="list-item" onclick="openModal('${s.date}')">
-            <div style="width:50px; font-weight:800; color:var(--blue); font-size:0.85rem;">${
+            <div style="width:60px; font-weight:800; color:var(--primary); font-size:0.9rem;">${
                 s.date
             }</div>
             <div style="flex:1;">
-                <div style="font-weight:700; color:var(--text); font-size:0.95rem;">
-                    ${s.exam.note ? `<div>📚 ${s.exam.note}</div>` : ''}
-                    ${
-                        (s.job.note || s.job) &&
-                        s.job.note !== '-' &&
-                        s.job !== '-'
-                            ? `<div>💼 ${s.job.note}</div>`
-                            : ''
-                    }
-                </div>
-                <div style="font-size:0.8rem; color:var(--text-sub); margin-top:5px; line-height:1.5;">
-                    ${s.general ? `<div>🏃 ${s.general}</div>` : ''}
-                    ${s.side ? `<div>💰 ${s.side}</div>` : ''}
+                <div style="font-weight:700; color:var(--text); font-size:1.05rem;">
+                    ${s.tasks.map((t) => `<div>${t.content}</div>`).join('')}
                 </div>
             </div>
             <div style="color:#b3e5fc; align-self:center;">❯</div>
@@ -826,31 +999,31 @@
 
             function openEditToday() {
                 const now = new Date();
-                openModal(
-                    `${String(now.getMonth() + 1).padStart(2, '0')}-${String(
-                        now.getDate()
-                    ).padStart(2, '0')}`
-                );
+                const todayStr = `${String(now.getMonth() + 1).padStart(
+                    2,
+                    '0'
+                )}-${String(now.getDate()).padStart(2, '0')}`;
+                openModal(todayStr);
             }
 
             function openModal(date) {
                 const target = schedules.find((s) => s.date === date);
                 document.getElementById('in-date').value = date;
-                document.getElementById('in-general').value = target
-                    ? target.general
-                    : '';
-                document.getElementById('in-exam-cat').value = target
-                    ? target.exam.cat
-                    : '';
-                document.getElementById('in-exam-note').value = target
-                    ? target.exam.note
-                    : '';
-                document.getElementById('in-job-note').value = target
-                    ? target.job.note || target.job
-                    : '';
-                document.getElementById('in-side').value = target
-                    ? target.side
-                    : '';
+
+                // 기존 데이터 폼에 채우기
+                const getTask = (id) =>
+                    target.tasks.find((t) => t.id === id)?.content || '';
+                document.getElementById('in-general').value =
+                    getTask('general');
+                document.getElementById('in-exam-cat').value =
+                    target.tasks
+                        .find((t) => t.id === 'exam')
+                        ?.label.split('(')[1]
+                        ?.replace(')', '') || '';
+                document.getElementById('in-exam-note').value = getTask('exam');
+                document.getElementById('in-job-note').value = getTask('job');
+                document.getElementById('in-side').value = getTask('side');
+
                 document.getElementById('modal').style.display = 'flex';
             }
 
@@ -860,23 +1033,37 @@
 
             function saveData() {
                 const date = document.getElementById('in-date').value;
-                const newData = {
-                    date,
-                    general: document.getElementById('in-general').value,
-                    exam: {
-                        cat: document.getElementById('in-exam-cat').value,
-                        note: document.getElementById('in-exam-note').value,
-                    },
-                    job: { note: document.getElementById('in-job-note').value },
-                    side: document.getElementById('in-side').value,
+                const target = schedules.find((s) => s.date === date);
+
+                const newTasks = [];
+                const add = (id, label, content) => {
+                    if (content) newTasks.push({ id, label, content });
                 };
-                const idx = schedules.findIndex((s) => s.date === date);
-                if (idx > -1)
-                    schedules[idx] = { ...schedules[idx], ...newData };
-                else {
-                    newData.done = [];
-                    schedules.push(newData);
-                }
+
+                add(
+                    'exam',
+                    `📚 정처기 (${
+                        document.getElementById('in-exam-cat').value
+                    })`,
+                    document.getElementById('in-exam-note').value
+                );
+                add(
+                    'job',
+                    '💼 취업 준비',
+                    document.getElementById('in-job-note').value
+                );
+                add(
+                    'general',
+                    '🏃 일반 일정',
+                    document.getElementById('in-general').value
+                );
+                add(
+                    'side',
+                    '💰 부수입 작업',
+                    document.getElementById('in-side').value
+                );
+
+                target.tasks = newTasks;
                 localStorage.setItem('mySchedules', JSON.stringify(schedules));
                 closeModal();
                 renderToday();
